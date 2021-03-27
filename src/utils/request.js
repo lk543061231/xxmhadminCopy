@@ -7,7 +7,8 @@ import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: 'http://18.167.155.100:8080/jeecg-boot', // api base_url
+  // baseURL: 'http://18.167.155.100:8080/jeecg-boot', // api base_url
+  baseURL: 'https://api.xxhm12.com/jeecg-boot', // api base_url
   timeout: 30000 // 请求超时时间
 })
 
