@@ -11,6 +11,11 @@
               <a-input placeholder="请输入渠道帐号" v-model="queryParam.userAccount"></a-input>
             </a-form-item>
           </a-col>
+          <a-col :md="4" :sm="6">
+            <a-form-item >
+              <a-input placeholder="请输入站点名称" v-model="queryParam.siteName"></a-input>
+            </a-form-item>
+          </a-col>
           <a-col :md="8" :sm="10">
             <a-form-item label="日期" >
               <j-date v-model="queryParam.createTime_begin"  date-format="YYYY-MM-DD " style="width:45%" placeholder="请选择开始时间" ></j-date>
