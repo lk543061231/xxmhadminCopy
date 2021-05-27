@@ -15,7 +15,7 @@
         </a-form-item>
        
         <a-form-item label="更新说明" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input v-decorator="[ 'content', validatorRules.content]" placeholder="请输入更新说明"></a-input>
+          <a-input v-decorator="[ 'content', validatorRules.content]" placeholder="请输入更新说明" :maxLength=50></a-input>
         </a-form-item>
         <a-form-item label="是否强制更新" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-radio-group  v-decorator="[ 'isEnforceUpdate', {initialValue:0}]">
@@ -24,23 +24,20 @@
           </a-radio-group>
         </a-form-item>
 
-        <a-form-item v-if="fromType=='android'"  label="上传apk" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <a-form-item v-if="fromType=='android' "  label="上传apk" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-upload
             listType="text"
-
             class="avatar-uploader"
             name="file"
             :action="uploadAction"
             :headers="headers"
+            :fileList="fileList"
             :beforeUpload="beforeUpload"
             @change="handleChange"
+
           >
-          <a-button class="ant-upload-text"> <a-icon type="upload" /> 上传pak </a-button>
-            <!-- <div v-if="model.file"  style="height:104px;max-width:300px">{{model.file}}</div>
-            <div v-else>
-              <a-icon :type="uploadLoading ? 'loading' : 'plus'" />
-              <div class="ant-upload-text">上传</div>
-            </div> -->
+          <a-button v-if="showUpdate" class="ant-upload-text"> <a-icon type="upload" /> 上传apk </a-button>
+
           </a-upload>
         </a-form-item>
         <a-form-item v-if="fromType=='ios'" label="TF链接" :labelCol="labelCol" :wrapperCol="wrapperCol">
@@ -92,13 +89,12 @@
           xs: { span: 24 },
           sm: { span: 16 },
         },
-
         confirmLoading: false,
         validatorRules:{
             version:{rules: [{ required: true, message: '请输入版本号!' }]},
             content:{rules: [{ required: true, message: '请输入更新说明!' }]},
             isEnforceUpdate:{rules: [{ required: true, message: '请输入版本号!' }]},
-            appPath:{rules: [{ required: true, message: '请输入TF链接!' }]},
+            appPath:{rules: [{ required: true, message: '请输入下载链接!' }]},
         
         },
         url: {
@@ -106,18 +102,15 @@
           edit: "/app/update/edit",
           fileUpload: window._CONFIG['domianURL']+"/app/aliyun/upload",
           imgerver: window._CONFIG['domianURL']+"/sys/common/view",
-        }
-     
+        },
+        showUpdate:true,
+        fileList:[],
+
       }
     },
     created () {
       const token = Vue.ls.get(ACCESS_TOKEN);
       this.headers = {"X-Access-Token":token}
-    //   if(this.fromType=='ios'){
-    //       this.model.clientType=2
-    //   }else{
-    //      this.model.clientType=1 
-    //   }
     },
     computed:{
       uploadAction:function () {
@@ -129,10 +122,21 @@
         return this.url.imgerver +"/"+ this.model.taskIco;
       },
       beforeUpload: function(file){
+        
         var fileType = file.type;
       },
       handleChange (info) {
+        if(info.file.name.indexOf('apk')==-1){
+          this.$message.warning('请选择apk包上传')
+          return
+        }
         this.picUrl = "";
+        this.fileList=info.fileList
+        if(info.fileList.length>0){
+          this.showUpdate = false;
+        }else{
+          this.showUpdate = true
+        }
         if (info.file.status === 'uploading') {
           this.uploadLoading = true;
           return
@@ -140,19 +144,22 @@
         if (info.file.status === 'done') {
           var response = info.file.response;
           this.uploadLoading = false;
-
           if(response.success){
             this.model.appPath = response.result.imgUrl;
-
             this.picUrl = "Has no pic url yet";
           }else{
             this.$message.warning(response.message);
           }
         }
       },
+   
       add (val) {
         this.fromType=val || ''
         this.edit({});
+        if(val=='android'){
+          this.fileList=[]
+          this.showUpdate=true
+        }
       },
       edit (record) {
         if(!this.fromType){
@@ -184,7 +191,6 @@
         // 触发表单验证
         this.form.validateFields((err, values) => {
           if (!err) {
-            that.confirmLoading = true;
             let httpurl = '';
             let method = '';
             if(!this.model.id){
@@ -195,7 +201,12 @@
                method = 'put';
             }
             let formData = Object.assign(this.model, values);
-            console.log("表单提交数据",formData)
+            if(!formData.appPath){
+              that.$message.warning('请上传apk文件')
+              return
+            }
+            that.confirmLoading = true;
+
             httpAction(httpurl,formData,method).then((res)=>{
               if(res.success){
                 that.$message.success(res.message);
