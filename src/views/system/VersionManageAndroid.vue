@@ -2,7 +2,7 @@
   <a-card :bordered="false">
 
     <div class="top">
-        <div class="tit">ios升级管理</div>
+        <div class="tit">安卓升级管理</div>
         <a-button @click="handleAdd('android')" type="primary" icon="plus">新增版本</a-button>
     </div>
   
