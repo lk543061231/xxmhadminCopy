@@ -188,6 +188,7 @@ export const JeecgListMixin = {
     },
 
     handleDelete: function (id) {
+      console.log(1111,id)
       if(!this.url.delete){
         this.$message.error("请设置url.delete属性!")
         return
@@ -207,8 +208,8 @@ export const JeecgListMixin = {
       this.$refs.modalForm.title = "编辑";
       this.$refs.modalForm.disableSubmit = false;
     },
-    handleAdd: function () {
-      this.$refs.modalForm.add();
+    handleAdd: function (val) {
+      this.$refs.modalForm.add(val);
       this.$refs.modalForm.title = "新增";
       this.$refs.modalForm.disableSubmit = false;
     },
