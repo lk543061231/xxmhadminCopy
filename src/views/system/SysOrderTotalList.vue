@@ -51,10 +51,41 @@
         :pagination="ipagination"
         :loading="loading"
         @change="handleTableChange">
-
+          <span slot="orderSuccess" slot-scope="text, record" @click="showDia(record)" class="dia-txt">
+            {{text}}
+          </span>
+          <span slot="orderFail" slot-scope="text, record" @click="showDia(record)" class="dia-txt">
+            {{text}}
+          </span>
+           
       </a-table>
     </div>
     <!-- table区域-end -->
+    <a-modal
+      :dialog-style="{ top: '200px' }"
+      :title="modalTitle"
+      :visible="modalVisible"
+      @ok="modalVisible=false"
+      @cancel="modalVisible=false"
+      :width="650"
+    >
+       <template slot="footer">
+        <a-button @click="modalVisible=false">确认</a-button>
+      </template>
+      <a-table
+        ref="table"
+        size="middle"
+        bordered
+        rowKey="id"
+        :columns="orderColumns"
+        :dataSource="orderData"
+        :loading="loading"
+        >
+
+      </a-table>
+    </a-modal>
+
+
   </a-card>
 </template>
 
@@ -78,7 +109,8 @@
         isLoading:false,
         totalData:{},
         needTotal:1,
-
+        modalVisible:false,
+        modalTitle:'',
         columns: [
           {
             title: '日期',
@@ -104,13 +136,15 @@
             title:'成功笔数',
             align:"center",
             sorter:true,
-            dataIndex: 'orderSuccess'
+            dataIndex: 'orderSuccess',
+            scopedSlots: {customRender: 'orderSuccess'},
           },
           {
             title:'失败笔数',
             align:"center",
             sorter:true,
-            dataIndex: 'orderFail'
+            dataIndex: 'orderFail',
+            scopedSlots: {customRender: 'orderFail'},
           },
           {
             title:'充值成功率',
@@ -137,17 +171,70 @@
           },
 
         ],
+        orderColumns:[
+            {
+              title:'渠道',
+              align:"center",
+              dataIndex: 'clientType',
+              customRender:function (t,r,index) {
+                return t==1?'羞羞漫画H5':t==2?'油条漫画H5':t==3?'油条漫画PC':t==4?'油条漫画iOS':t==5?'油条漫Android':'未知'
+              }
+            },
+            {
+              title:'微信成功笔数',
+              align:"center",
+              dataIndex: 'wechatSucess',
+            },
+            {
+              title:'微信失败笔数',
+              align:"center",
+              dataIndex: 'wechatFaile',
+            },
+            {
+              title:'支付宝成功笔数',
+              align:"center",
+              dataIndex: 'alipaySucess',
+            },
+            {
+              title:'支付宝失败笔数',
+              align:"center",
+              dataIndex: 'alipayFaile',
+            },
+            {
+              title:'成功率',
+              align:"center",
+              dataIndex: 'sucessRate',
+              customRender:function (t,r,index) {
+                return t?Number(t).toFixed(2)+'%':''
+              }
+            },
+        ],
         url: {
           list: "/system/sysTotal/list",
-
         },
+        orderData:[]
+        
       }
     },
     created:function() {
 
     },
     methods:{
-
+      showDia(data){
+        let queryData=JSON.parse(JSON.stringify(data))
+        queryData.createTime=queryData.createTime.length>8?queryData.createTime.substring(0,queryData.createTime.length - 9):queryData.createTime;
+        axios({
+          url: '/system/sysTotal/payFaileAndSucess',
+          method: 'get',
+          data: { id: queryData.id}
+        }).then(res => {
+          if(res.code==0){
+            this.modalTitle=queryData.createTime+'渠道充值分析'
+            this.modalVisible=true
+            this.orderData=res.result
+          }
+        })
+      }
     }
   }
 </script>
@@ -199,5 +286,9 @@
         font-size: 1rem;
       }
     }
+  }
+  .dia-txt{
+    cursor: pointer;
+    color: #1890ff;
   }
 </style>
