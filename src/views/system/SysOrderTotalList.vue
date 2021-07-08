@@ -205,7 +205,7 @@
               align:"center",
               dataIndex: 'sucessRate',
               customRender:function (t,r,index) {
-                return t?Number(t).toFixed(2)+'%':''
+                return t?Number(t*100)+'%':''
               }
             },
         ],
