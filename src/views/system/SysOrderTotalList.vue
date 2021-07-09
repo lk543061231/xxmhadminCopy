@@ -96,6 +96,7 @@
   import { axios } from '@/utils/request'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import JDate from '@/components/jeecg/JDate'
+  import moment from 'moment'
   export default {
     name: 'SysOrdertotalList',
     mixins:[JeecgListMixin],
@@ -223,10 +224,14 @@
       showDia(data){
         let queryData=JSON.parse(JSON.stringify(data))
         queryData.createTime=queryData.createTime.length>8?queryData.createTime.substring(0,queryData.createTime.length - 9):queryData.createTime;
+        console.log(queryData.createTime)
         axios({
           url: '/system/sysTotal/payFaileAndSucess',
           method: 'get',
-          data: { id: queryData.id}
+          data: { 
+            id: queryData.id,
+            time:queryData.createTime
+          }
         }).then(res => {
           if(res.code==0){
             this.modalTitle=queryData.createTime+'渠道充值分析'
