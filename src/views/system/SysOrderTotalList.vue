@@ -206,7 +206,7 @@
               align:"center",
               dataIndex: 'sucessRate',
               customRender:function (t,r,index) {
-                return t?Number(t*100)+'%':''
+                return t?Number(t*100).toFixed(0)+'%':''
               }
             },
         ],
@@ -228,7 +228,7 @@
         axios({
           url: '/system/sysTotal/payFaileAndSucess',
           method: 'get',
-          data: { 
+          params: { 
             id: queryData.id,
             time:queryData.createTime
           }
