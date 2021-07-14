@@ -75,13 +75,7 @@
                  </a-menu-item>
                </a-menu>
              </a-dropdown>
-
           </span>
-
-
-
-
-
         </a-table>
       </div>
       <user-modal ref="modalForm" @ok="modalFormOk"></user-modal>
