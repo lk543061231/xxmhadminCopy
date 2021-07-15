@@ -80,6 +80,7 @@
                 align: "center",
                 width: 150,
                 dataIndex: 'rechargeButtonRate', 
+                
             },
             {
                title: '充值页面',
@@ -98,9 +99,7 @@
                 align: "center",
                 width: 150,
                 dataIndex: 'payButtonRate', 
-                customRender:function (t,r,index) {
-                    return t? Number(t*100).toFixed(0)+'%':t
-                }
+                
             },
             {
                title: '订单提交数',
@@ -119,9 +118,7 @@
                 align: "center",
                 width: 150,
                 dataIndex: 'orderSucessRate',
-                customRender:function (t,r,index) {
-                    return t? Number(t*100).toFixed(0)+'%':t
-                }
+               
             },
         ],
         url: {
