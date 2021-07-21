@@ -123,7 +123,9 @@
                 align: "center",
                 width: 150,
                 dataIndex: 'orderSucessRate',
-               
+                customRender:function (t,r,index) {
+                  return t?t+'%':'';
+                }
             },
         ],
         url: {
