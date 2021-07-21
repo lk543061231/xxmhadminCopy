@@ -80,7 +80,9 @@
                 align: "center",
                 width: 150,
                 dataIndex: 'rechargeButtonRate', 
-                
+                customRender:function (t,r,index) {
+                  return t?t+'%':'';
+                }
             },
             {
                title: '充值页面',
@@ -92,14 +94,17 @@
                title: '去支付按钮点击量',
                 align: "center",
                 width: 150,
-                dataIndex: 'rechargeButton', 
+                dataIndex: 'rechargeButton',
+                
             },
             {
                title: '支付按钮点击率',
                 align: "center",
                 width: 150,
                 dataIndex: 'payButtonRate', 
-                
+                customRender:function (t,r,index) {
+                  return t?t+'%':'';
+                }
             },
             {
                title: '订单提交数',
